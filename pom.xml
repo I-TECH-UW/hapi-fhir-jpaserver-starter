@@ -265,6 +265,40 @@
 		<finalName>hapi-fhir-jpaserver</finalName>
 
 		<plugins>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.9</version>
+				<executions>
+					<execution>
+						<id>tag-latest</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>tag</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<tag>latest</tag>
+						</configuration>
+					</execution>
+					<execution>
+						<id>tag-version</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>tag</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<tag>${project.version}</tag>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${project.artifactId}</repository>
+				</configuration>
+			</plugin>
 			<!-- The following is not required for the application to build, but allows 
 				you to test it by issuing "mvn jetty:run" from the command line. -->
 			<plugin>

@@ -49,13 +49,14 @@ public class OEForwardingInterceptor extends InterceptorAdapter {
                 URI uri = new URI(HapiProperties.getOpenELISApiAddress() + theProcessedRequest.getResourceType());
                 HttpPost httpPost = new HttpPost(uri);
 
-                if (uri.getHost().equals("localhost")) {
+				// TODO this will need to be secured before it is production ready
+//                if (uri.getHost().equals("localhost")) {
                     SSLContextBuilder builder = new SSLContextBuilder();
                     builder.loadTrustMaterial(null, TrustAllStrategy.INSTANCE);
                     SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
                     httpClient = HttpClients.custom().setSSLSocketFactory(sslsf)
                             .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
-                }
+//                }
 
                 UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
                         HapiProperties.getOpenELISApiUsername(), HapiProperties.getOpenELISApiPassword());
@@ -72,6 +73,9 @@ public class OEForwardingInterceptor extends InterceptorAdapter {
 
                 response = httpClient.execute(httpPost);
                 if (response.getStatusLine().getStatusCode() != 200) {
+					System.out.println(uri.toString());
+					System.out.println(response.getStatusLine().getStatusCode());
+					System.out.println(response.getStatusLine().getReasonPhrase());
                     throw new UnclassifiedServerFailureException(500, "Could not save object in OE Database");
                 }
             }
