@@ -54,9 +54,9 @@ public class HapiProperties {
     static final String MAX_FETCH_SIZE = "max_fetch_size";
     static final String MAX_PAGE_SIZE = "max_page_size";
     static final String SERVER_ADDRESS = "server_address";
-    static final String OPENELIS_API_ADDRESS = "openelis_api_address";
-    static final String OPENELIS_API_USERNAME = "openelis_api_username";
-    static final String OPENELIS_API_PASSWORD = "openelis_api_password";
+//	static final String OPENELIS_API_ADDRESS = "openelis_api_address";
+//	static final String OPENELIS_API_USERNAME = "openelis_api_username";
+//	static final String OPENELIS_API_PASSWORD = "openelis_api_password";
     static final String SERVER_ID = "server.id";
     static final String SERVER_NAME = "server.name";
     static final String SUBSCRIPTION_EMAIL_ENABLED = "subscription.email.enabled";
@@ -261,15 +261,18 @@ public class HapiProperties {
     }
 
     public static String getOpenELISApiAddress() {
-        return HapiProperties.getProperty(OPENELIS_API_ADDRESS);
+		return System.getProperty("OE_FHIR_API_ADDRESS");
+//		return HapiProperties.getProperty(OPENELIS_API_ADDRESS);
     }
 
     public static String getOpenELISApiUsername() {
-        return HapiProperties.getProperty(OPENELIS_API_USERNAME);
+		return System.getProperty("OE_FHIR_API_USERNAME");
+//        return HapiProperties.getProperty(OPENELIS_API_USERNAME);
     }
 
     public static String getOpenELISApiPassword() {
-        return HapiProperties.getProperty(OPENELIS_API_PASSWORD);
+		return System.getProperty("OE_FHIR_API_USER_PASSWORD");
+//        return HapiProperties.getProperty(OPENELIS_API_PASSWORD);
     }
 
     public static Integer getDefaultPageSize() {
@@ -310,16 +313,19 @@ public class HapiProperties {
     }
 
     public static String getDataSourceUrl() {
-        return HapiProperties.getProperty(DATASOURCE_URL,
-                "jdbc:derby:directory:target/jpaserver_derby_files;create=true");
+		return System.getProperty("OE_DB_URL");
+//        return HapiProperties.getProperty(DATASOURCE_URL,
+//                "jdbc:derby:directory:target/jpaserver_derby_files;create=true");
     }
 
     public static String getDataSourceUsername() {
-        return HapiProperties.getProperty(DATASOURCE_USERNAME);
+		return System.getProperty("OE_DB_USERNAME");
+//        return HapiProperties.getProperty(DATASOURCE_USERNAME);
     }
 
     public static String getDataSourcePassword() {
-        return HapiProperties.getProperty(DATASOURCE_PASSWORD);
+		return System.getProperty("OE_DB_USER_PASSWORD");
+//        return HapiProperties.getProperty(DATASOURCE_PASSWORD);
     }
 
     public static Boolean getAllowMultipleDelete() {
