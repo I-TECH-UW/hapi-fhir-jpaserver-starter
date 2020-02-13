@@ -20,8 +20,14 @@
 
 FROM tomcat:9-jre11
 
+#rewrite server.xml with our server.xml for a number of security configurations
+#    
+ADD server.xml /usr/local/tomcat/conf/server.xml
+
 RUN mkdir -p /data/hapi/lucenefiles && chmod 775 /data/hapi/lucenefiles
 ADD target/*.war /usr/local/tomcat/webapps/
+RUN ln -s /usr/local/tomcat/webapps/hapi-fhir-jpaserver /usr/local/tomcat/webapps/ROOT
+
 #COPY --from=build-hapi /tmp/hapi-fhir-jpaserver-starter/target/*.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
