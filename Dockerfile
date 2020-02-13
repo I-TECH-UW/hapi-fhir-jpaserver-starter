@@ -1,36 +1,29 @@
-#FROM hapiproject/hapi:base as build-hapi
-
-#ARG HAPI_FHIR_URL=https://github.com/jamesagnew/hapi-fhir/
-#ARG HAPI_FHIR_BRANCH=master
-#ARG HAPI_FHIR_STARTER_URL=https://github.com/hapifhir/hapi-fhir-jpaserver-starter/
-#ARG HAPI_FHIR_STARTER_BRANCH=master
-
-#RUN git clone --branch ${HAPI_FHIR_BRANCH} ${HAPI_FHIR_URL}
-#WORKDIR /tmp/hapi-fhir/
-#RUN /tmp/apache-maven-3.6.2/bin/mvn dependency:resolve
-#RUN /tmp/apache-maven-3.6.2/bin/mvn install -DskipTests
-
-
-
-#WORKDIR /tmp
-#RUN git clone --branch ${HAPI_FHIR_STARTER_BRANCH} ${HAPI_FHIR_STARTER_URL}
-
-#WORKDIR /tmp/hapi-fhir-jpaserver-starter
-#RUN /tmp/apache-maven-3.6.2/bin/mvn clean install -DskipTests
-
 FROM tomcat:9-jre11
+
+RUN mkdir -p /data/hapi/lucenefiles && chmod 775 /data/hapi/lucenefiles
+#Clean out unneccessary files from tomcat (especially pre-existing applications) 
+RUN rm -rf /usr/local/tomcat/webapps/* \ 
+    /usr/local/tomcat/conf/Catalina/localhost/manager.xml
+    
+#Add the application to tomcat
+ADD target/*.war /usr/local/tomcat/webapps/
+RUN ln -s /usr/local/tomcat/webapps/hapi-fhir-jpaserver /usr/local/tomcat/webapps/ROOT
 
 #rewrite server.xml with our server.xml for a number of security configurations
 #    
 ADD server.xml /usr/local/tomcat/conf/server.xml
 
-RUN mkdir -p /data/hapi/lucenefiles && chmod 775 /data/hapi/lucenefiles
-ADD target/*.war /usr/local/tomcat/webapps/
-RUN ln -s /usr/local/tomcat/webapps/hapi-fhir-jpaserver /usr/local/tomcat/webapps/ROOT
+#rewrite cataline.properties with our catalina.properties so it contains:
+#    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
+#    org.apache.catalina.connector.RECYCLE_FACADES=true
+#    org.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false
+#    org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false
+#    org.apache.coyote.USE_CUSTOM_STATUS_MSG_IN_HEADER=false
+ADD install/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
 
-#COPY --from=build-hapi /tmp/hapi-fhir-jpaserver-starter/target/*.war /usr/local/tomcat/webapps/
-
-EXPOSE 8080
+#replace ServerInfo.properties with a less informative one
+RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util
+ADD install/tomcat-resources/ServerInfo.properties /usr/local/tomcat/lib/org/apache/catalina/util/ServerInfo.properties 
 
 #restrict files
 #GID AND UID must be kept the same as setupTomcat.sh (if using default certificate group)
