@@ -17,7 +17,7 @@ import ca.uhn.fhir.to.TesterConfig;
  *    method below
  */
 @Configuration
-@Import(FhirTesterMvcConfig.class)
+@Import({ FhirTesterMvcConfig.class, HttpClientConfig.class })
 public class FhirTesterConfig {
 
 	/**

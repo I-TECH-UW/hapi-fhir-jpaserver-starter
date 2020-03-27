@@ -23,6 +23,8 @@ FROM tomcat:9-jre11
 RUN mkdir -p /data/hapi/lucenefiles && chmod 775 /data/hapi/lucenefiles
 COPY --from=build-hapi /tmp/hapi-fhir-jpaserver-starter/target/*.war /usr/local/tomcat/webapps/
 
-EXPOSE 8080
+ADD install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
+
+EXPOSE 8443
 
 CMD ["catalina.sh", "run"]
