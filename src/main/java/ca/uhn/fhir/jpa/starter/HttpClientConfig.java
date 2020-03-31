@@ -21,7 +21,7 @@ import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 import ca.uhn.fhir.to.TesterConfig;
 
 @Configuration
-@PropertySource("file:/etc/openelis-global/common_ssl.properties")
+@PropertySource("file:/run/secrets/common.properties")
 public class HttpClientConfig {
 
 	@Value("${server.ssl.trust-store}")
