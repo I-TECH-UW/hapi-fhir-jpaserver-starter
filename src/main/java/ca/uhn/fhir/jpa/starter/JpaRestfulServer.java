@@ -317,6 +317,10 @@ public class JpaRestfulServer extends RestfulServer {
     if (HapiProperties.getBulkExportEnabled()) {
       registerProvider(appCtx.getBean(BulkDataExportProvider.class));
     }
+    
+    // Subscription retry interceptor
+    IInterceptorService interceptorService = appCtx.getBean(IInterceptorService.class);
+    interceptorService.registerInterceptor(new SubscriptionRetryInterceptor(ctx));
 
   }
 
