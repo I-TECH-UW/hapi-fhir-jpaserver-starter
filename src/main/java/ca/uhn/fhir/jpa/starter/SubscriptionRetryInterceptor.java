@@ -34,10 +34,13 @@ public class SubscriptionRetryInterceptor {
 
 		synchronized (failedRestHooks) {
 			List<ResourceDeliveryMessage> failedPayloads = failedRestHooks.get(endpointUrl);
+			ourLog.info("checking for failed payloads for " + endpointUrl);
 
 			if (failedPayloads == null || failedPayloads.isEmpty()) {
+				ourLog.info("no failed payloads for " + endpointUrl);
 				return true;
 			} else {
+				ourLog.info("failed payloads for " + endpointUrl + " found");
 				boolean success = sendFailedNotifications(failedPayloads);
 				if (!success) {
 					saveFailedHook(resourceDeliveryMessage);
@@ -60,6 +63,7 @@ public class SubscriptionRetryInterceptor {
 	private boolean retryPayload(ResourceDeliveryMessage failedPayload) {
 		IBaseResource resource = failedPayload.getPayload(ctx);
 		String endpointUrl = failedPayload.getSubscription().getEndpointUrl();
+		ourLog.info("retrying failed payload to " + endpointUrl);
 		try {
 			IGenericClient fhirClient = ctx.newRestfulGenericClient(endpointUrl);
 
@@ -73,7 +77,7 @@ public class SubscriptionRetryInterceptor {
 			}
 			return true;
 		} catch (RuntimeException e) {
-			ourLog.error("error communicating resource to " + endpointUrl);
+			ourLog.error("error communicating failed payload to " + endpointUrl);
 			return false;
 		}
 	}
@@ -89,6 +93,7 @@ public class SubscriptionRetryInterceptor {
 				failedPayloads = new ArrayList<>();
 				failedRestHooks.put(endpointUrl, failedPayloads);
 			}
+			ourLog.info("adding payload to the retry queue for " + endpointUrl);
 			failedPayloads.add(resourceDeliveryMessage);
 		}
 
